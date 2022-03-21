@@ -5,7 +5,7 @@ setup:
 	touch database/database.sqlite
 	php artisan migrate
 	php artisan db:seed
-	npm ci
+	npm install
 
 start:
 	php artisan serve
