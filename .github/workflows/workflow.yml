@@ -10,7 +10,7 @@ jobs:
         with:
           php-version: '8.0.14'
       - name: Install
-        run: make install
+        run: make setup
       - name: Run linter
         run: make lint
       - name: Run tests
