@@ -1,11 +1,11 @@
 setup:
 	composer install
-	php artisan config:cache
 	cp -n .env.example .env|| true
 	php artisan key:gen --ansi
 	touch database/database.sqlite
 	php artisan migrate
 	php artisan db:seed
+	php artisan config:cache
 	npm install
 
 start:
