@@ -17,3 +17,12 @@ use App\Http\Controllers\URLController;
 Route::get('/', function () {
     return view('index');
 });
+
+Route::get('/urls', [URLController::class, 'index'])
+    ->name('urls.index');
+
+Route::get('/urls/{id}', [URLController::class, 'show'])
+    ->name('urls.show');
+
+Route::post('/urls', [URLController::class, 'store'])
+    ->name('urls.store');
