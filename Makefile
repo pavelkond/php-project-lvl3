@@ -1,5 +1,6 @@
 setup:
 	composer install
+	php artisan config:cache
 	cp -n .env.example .env|| true
 	php artisan key:gen --ansi
 	touch database/database.sqlite
