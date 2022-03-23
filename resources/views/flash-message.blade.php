@@ -1,4 +1,4 @@
-@if($message = \Illuminate\Support\Facades\Session::get('error'))
+@if($message = session('error'))
     <div>
         <strong>
             {{ $message }}
@@ -6,7 +6,7 @@
     </div>
 @endif
 
-@if($message = Session::get('success'))
+@if($message = session('success'))
     <div>
         <strong>
             {{ $message }}
@@ -14,7 +14,7 @@
     </div>
 @endif
 
-@if($message = Session::get('warning'))
+@if($message = session('warning'))
     <div>
         <strong>
             {{ $message }}
