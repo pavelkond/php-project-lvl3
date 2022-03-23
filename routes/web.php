@@ -24,5 +24,5 @@ Route::get('/urls', [URLController::class, 'index'])
 Route::get('/urls/{id}', [URLController::class, 'show'])
     ->name('urls.show');
 
-Route::post('/urls', [URLController::class, 'store'])
+Route::post('/urls', ['before' => 'csrf', URLController::class, 'store'])
     ->name('urls.store');
