@@ -5,12 +5,14 @@ namespace Tests\Feature;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class URLControllerTest extends TestCase
 {
     use WithFaker;
+    use WithoutMiddleware;
 
     public function setUp(): void
     {
