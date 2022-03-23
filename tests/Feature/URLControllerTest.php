@@ -83,4 +83,14 @@ class URLControllerTest extends TestCase
         $response->assertSessionHasNoErrors();
         $response->assertSeeText($url->name);
     }
+
+    public function testCheck()
+    {
+        $url = DB::table('urls')->inRandomOrder()->first();
+        $response = $this->post(route('urls.check', $url->id));
+        $response->assertRedirect(route('urls.show', $url->id));
+        $this->assertDatabaseHas('url_checks', [
+            'url_id' => $url->id
+        ]);
+    }
 }
