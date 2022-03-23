@@ -15,7 +15,7 @@ class URLController extends Controller
             ->groupBy('url_id')
             ->select(DB::raw('max("created_at") as latest, url_id'))
             ->get();
-        $latestChecks = $checksObj->mapWithKeys(function($item, $key) {
+        $latestChecks = $checksObj->mapWithKeys(function ($item, $key) {
                 return [$item->url_id => ['latest' => $item->latest]];
         });
         return view('url.index', compact('urls', 'latestChecks'));
