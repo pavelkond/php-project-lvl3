@@ -42,6 +42,15 @@ class URLController extends Controller
         return redirect()->route('urls.show', $id)->with($flashAlert, $flashMessage);
     }
 
+    public function check($urlId)
+    {
+        DB::table('url_checks')->insert([
+            'url_id' => $urlId,
+            'created_at' => Carbon::now()->toDateTimeString()
+        ]);
+
+        return redirect()->route('urls.show', $urlId)->with('success', 'Страница успешно проверена');
+    }
 
     private function normalizeURL(string $url): string|false
     {
