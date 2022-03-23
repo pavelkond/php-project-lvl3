@@ -11,13 +11,21 @@ class URLController extends Controller
     public function index()
     {
         $urls = DB::table('urls')->get();
-        return view('url.index', compact('urls'));
+        $checksObj = DB::table('url_checks')
+            ->groupBy('url_id')
+            ->select(DB::raw('max("created_at") as latest, url_id'))
+            ->get();
+        $latestChecks = $checksObj->mapWithKeys(function($item, $key) {
+                return [$item->url_id => ['latest' => $item->latest]];
+        });
+        return view('url.index', compact('urls', 'latestChecks'));
     }
 
     public function show($id)
     {
         $url = DB::table('urls')->find($id);
-        return view('url.show', compact('url'));
+        $checks = DB::table('url_checks')->where('url_id', $id)->get();
+        return view('url.show', compact('url', 'checks'));
     }
 
     public function store(Request $request)

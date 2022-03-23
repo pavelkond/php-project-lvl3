@@ -11,10 +11,10 @@
         </tr>
         @foreach ($urls as $url)
             <tr>
-                <th>{{ $url->id }}</th>
-                <th><a href="{{ route('urls.show', $url->id) }}">{{ $url->name }}</a></th>
-                <th></th>
-                <th></th>
+                <td>{{ $url->id }}</td>
+                <td><a href="{{ route('urls.show', $url->id) }}">{{ $url->name }}</a></td>
+                <td>{{ $latestChecks[$url->id]['latest'] ?? '' }}</td>
+                <td></td>
             </tr>
         @endforeach
     </table>
