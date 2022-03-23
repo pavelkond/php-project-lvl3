@@ -18,14 +18,14 @@
 <body>
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a href="/" class="navbar-brand">Анализатор страниц</a>
+        <a href="{{ route('index') }}" class="navbar-brand">Анализатор страниц</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
-                <li class="nav-item active"><a href="/" class="nav-link">Главная</a></li>
+                <li class="nav-item active"><a href="{{ route('index') }}" class="nav-link">Главная</a></li>
                 <li class="nav-item"><a href="{{ route('urls.index') }}" class="nav-link">Сайты</a></li>
             </ul>
         </div>

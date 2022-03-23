@@ -16,7 +16,7 @@ use App\Http\Controllers\URLController;
 
 Route::get('/', function () {
     return view('index');
-});
+})->name('index');
 
 Route::get('/urls', [URLController::class, 'index'])
     ->name('urls.index');
