@@ -25,7 +25,7 @@ class URLController extends Controller
         $data = $request->input('url.name');
         $url = $this->normalizeURL($data);
         if (!$url) {
-            return redirect()->route('index')->setStatusCode(422)->with('error', 'Некорректный URL');
+            return back()->with('error', 'Некорректный URL');
         }
         $reqURL = DB::table('urls')->where('name', $url)->first();
         $flashAlert = isset($reqURL->id) ? 'warning' : 'success';
@@ -41,6 +41,7 @@ class URLController extends Controller
 
         return redirect()->route('urls.show', $id)->with($flashAlert, $flashMessage);
     }
+
 
     private function normalizeURL(string $url): string|false
     {
