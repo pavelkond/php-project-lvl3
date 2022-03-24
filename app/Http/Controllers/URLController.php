@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use DiDom\Document;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -38,7 +40,7 @@ class URLController extends Controller
         $data = $request->input('url.name');
         $url = $this->normalizeURL($data);
         if (!$url) {
-            return back()->with('error', 'Некорректный URL');
+            return back()->with('error', 'Некорректный URL')->with('currentUrl', $data);
         }
         $reqURL = DB::table('urls')->where('name', $url)->first();
         $flashAlert = isset($reqURL->id) ? 'warning' : 'success';
@@ -59,9 +61,13 @@ class URLController extends Controller
     {
         $url = DB::table('urls')->find($urlId);
         $response = Http::get($url->name);
+        $document = new Document($response->body());
         DB::table('url_checks')->insert([
             'url_id' => $urlId,
             'status_code' => $response->status(),
+            'h1' => optional($document->first('h1'))->text(),
+            'title' => optional($document->first('title'))->text(),
+            'description' => optional($document->first('meta[name=description]'))->text(),
             'created_at' => Carbon::now()->toDateTimeString()
         ]);
 
