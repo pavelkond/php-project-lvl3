@@ -1,7 +1,7 @@
-@if($message = session('error'))
+@if(isset($errors))
     <div class="alert alert-danger" role="alert">
         <strong>
-            {{ $message }}
+            {{ $errors->first('error') }}
         </strong>
     </div>
 @endif

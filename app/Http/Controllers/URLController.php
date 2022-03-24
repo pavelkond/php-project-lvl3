@@ -50,8 +50,8 @@ class URLController extends Controller
         $url = is_null($data) ? false : $this->normalizeURL($data);
         if (!$url) {
             return back()
-                ->with('error', 'Некорректный URL')
-                ->with('currentUrl', $data);
+                ->with('currentUrl', $data)
+                ->withErrors(['error' => 'Некорректный URL']);
         }
         $reqURL = DB::table('urls')->where('name', $url)->first();
         $flashAlert = isset($reqURL->id) ? 'warning' : 'success';
@@ -75,7 +75,8 @@ class URLController extends Controller
             $response = Http::get($url->name);
             $document = new Document($response->body());
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
-            return back()->with('error', $e->getMessage());
+            return back()
+                ->withErrors(['error' => $e->getMessage()]);
         } catch (\ValueError $e) {
             $document = new Document('html');
         }

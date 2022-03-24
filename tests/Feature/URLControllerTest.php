@@ -71,6 +71,7 @@ class URLControllerTest extends TestCase
         ];
         $response = $this->post(route('urls.store'), $data);
         $response->assertRedirect(route('index'));
+        $response->assertSessionHasErrors();
         $this->assertDatabaseMissing('urls', [
             'name' => $data['url']['name']
         ]);
