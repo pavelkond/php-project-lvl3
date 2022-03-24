@@ -73,22 +73,20 @@ class URLController extends Controller
         $url = DB::table('urls')->find($urlId);
         try {
             $response = Http::get($url->name);
-            $document = new Document($response->body());
-        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            $body = empty($response->body()) ? 'html' : $response->body();
+            $document = new Document($body);
+            DB::table('url_checks')->insert([
+                'url_id' => $urlId,
+                'status_code' => $response->status(),
+                'h1' => optional($document->first('h1'))->text(),
+                'title' => optional($document->first('title'))->text(),
+                'description' => optional($document->first('meta[name=description]'))->attr('content'),
+                'created_at' => Carbon::now()->toISOString()
+            ]);
+        } catch (\Exception $e) {
             return back()
                 ->withErrors(['error' => $e->getMessage()]);
-        } catch (\ValueError $e) {
-            $document = new Document('html');
         }
-
-        DB::table('url_checks')->insert([
-            'url_id' => $urlId,
-            'status_code' => isset($response) ? $response->status() : 400,
-            'h1' => optional($document->first('h1'))->text(),
-            'title' => optional($document->first('title'))->text(),
-            'description' => optional($document->first('meta[name=description]'))->attr('content'),
-            'created_at' => Carbon::now()->toISOString()
-        ]);
 
         return redirect()->route('urls.show', $urlId)->with('success', 'Страница успешно проверена');
     }
