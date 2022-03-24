@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('h1')->nullable();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
-            $table->dateTime('created_at');
+            $table->timestamp('created_at', 6);
         });
     }
 
