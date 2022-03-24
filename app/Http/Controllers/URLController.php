@@ -34,7 +34,7 @@ class URLController extends Controller
         return view('url.index', compact('urls', 'latestChecks'));
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         $url = DB::table('urls')->find($id);
         $checks = DB::table('url_checks')
@@ -44,7 +44,7 @@ class URLController extends Controller
         return view('url.show', compact('url', 'checks'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
         $data = $request->input('url.name');
         $url = is_null($data) ? false : $this->normalizeURL($data);
@@ -68,7 +68,7 @@ class URLController extends Controller
         return redirect()->route('urls.show', $id)->with($flashAlert, $flashMessage);
     }
 
-    public function check($urlId): \Illuminate\Http\RedirectResponse
+    public function check(int $urlId): \Illuminate\Http\RedirectResponse
     {
         $url = DB::table('urls')->find($urlId);
         try {
@@ -83,7 +83,7 @@ class URLController extends Controller
 
         DB::table('url_checks')->insert([
             'url_id' => $urlId,
-            'status_code' => $response->status(),
+            'status_code' => isset($response) ? $response->status() : 400,
             'h1' => optional($document->first('h1'))->text(),
             'title' => optional($document->first('title'))->text(),
             'description' => optional($document->first('meta[name=description]'))->attr('content'),

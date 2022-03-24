@@ -50,13 +50,14 @@ class URLControllerTest extends TestCase
         $this->assertDatabaseHas('urls', [
             'name' => $data['url']['name']
         ]);
-        $urlID = DB::table('urls')->where('name', $data['url']['name'])->first()->id;
-        $response->assertRedirect(route('urls.show', $urlID));
+        $url = DB::table('urls')->where('name', $data['url']['name'])->first();
+        $this->assertNotNull($url);
+        $response->assertRedirect(route('urls.show', $url->id));
         $response->assertSessionHasNoErrors();
 
 
         $response = $this->post(route('urls.store'), $data);
-        $response->assertRedirect(route('urls.show', $urlID));
+        $response->assertRedirect(route('urls.show', $url->id));
         $response->assertSessionHasNoErrors();
         $urlCount = DB::table('urls')->where('name', $data['url']['name'])->count();
         $this->assertEquals(1, $urlCount);
@@ -80,6 +81,7 @@ class URLControllerTest extends TestCase
     public function testShow()
     {
         $url = DB::table('urls')->inRandomOrder()->first();
+        $this->assertNotNull($url);
         $response = $this->get(route('urls.show', $url->id));
         $response->assertOk();
         $response->assertSessionHasNoErrors();
@@ -89,6 +91,7 @@ class URLControllerTest extends TestCase
     public function testCheck()
     {
         $url = DB::table('urls')->inRandomOrder()->first();
+        $this->assertNotNull($url);
         Http::fake();
         $response = $this->post(route('urls.check', $url->id));
         $response->assertRedirect(route('urls.show', $url->id));
