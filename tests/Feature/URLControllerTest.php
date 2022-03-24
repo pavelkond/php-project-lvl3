@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class URLControllerTest extends TestCase
@@ -87,10 +88,12 @@ class URLControllerTest extends TestCase
     public function testCheck()
     {
         $url = DB::table('urls')->inRandomOrder()->first();
+        Http::fake();
         $response = $this->post(route('urls.check', $url->id));
         $response->assertRedirect(route('urls.show', $url->id));
         $this->assertDatabaseHas('url_checks', [
-            'url_id' => $url->id
+            'url_id' => $url->id,
+            'status_code' => 200
         ]);
     }
 }
