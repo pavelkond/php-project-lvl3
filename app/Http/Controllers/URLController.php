@@ -5,24 +5,29 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 
 class URLController extends Controller
 {
     public function index()
     {
         $urls = DB::table('urls')->get();
-        $checksObj = DB::table('url_checks')
+        $latest = DB::table('url_checks')
             ->groupBy('url_id')
-            ->select(DB::raw('max("created_at") as latest, url_id'))
-            ->get();
-        $latestChecks = $checksObj->mapWithKeys(function ($item, $key) {
-                return [$item->url_id => ['latest' => $item->latest]];
+            ->select('url_id', DB::raw('max("created_at") as latest_check'));
+        $latestWithCode = DB::table('url_checks')->joinSub($latest, 'sub', function ($join) {
+            $join->on('url_checks.url_id', '=', 'sub.url_id')
+                ->on('url_checks.created_at', '=', 'sub.latest_check');
+        })->get();
+        $latestChecks = $latestWithCode->mapWithKeys(function ($item, $key) {
+                return [$item->url_id => ['latest' => $item->latest_check, 'status' => $item->status_code]];
         });
         return view('url.index', compact('urls', 'latestChecks'));
     }
 
     public function show($id)
     {
+
         $url = DB::table('urls')->find($id);
         $checks = DB::table('url_checks')->where('url_id', $id)->get();
         return view('url.show', compact('url', 'checks'));
@@ -50,10 +55,13 @@ class URLController extends Controller
         return redirect()->route('urls.show', $id)->with($flashAlert, $flashMessage);
     }
 
-    public function check($urlId)
+    public function check($urlId): \Illuminate\Http\RedirectResponse
     {
+        $url = DB::table('urls')->find($urlId);
+        $response = Http::get($url->name);
         DB::table('url_checks')->insert([
             'url_id' => $urlId,
+            'status_code' => $response->status(),
             'created_at' => Carbon::now()->toDateTimeString()
         ]);
 
