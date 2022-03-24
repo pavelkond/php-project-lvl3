@@ -14,7 +14,7 @@
                 <td>{{ $url->id }}</td>
                 <td><a href="{{ route('urls.show', $url->id) }}">{{ $url->name }}</a></td>
                 <td>{{ $latestChecks[$url->id]['latest'] ?? '' }}</td>
-                <td></td>
+                <td>{{ $latestChecks[$url->id]['status'] ?? '' }}</td>
             </tr>
         @endforeach
     </table>
