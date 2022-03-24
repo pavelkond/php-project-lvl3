@@ -1,5 +1,5 @@
 @if($message = session('error'))
-    <div>
+    <div class="alert alert-danger" role="alert">
         <strong>
             {{ $message }}
         </strong>
@@ -7,7 +7,7 @@
 @endif
 
 @if($message = session('success'))
-    <div>
+    <div class="alert alert-info" role="alert">
         <strong>
             {{ $message }}
         </strong>
@@ -15,7 +15,7 @@
 @endif
 
 @if($message = session('warning'))
-    <div>
+    <div class="alert alert-info" role="alert">
         <strong>
             {{ $message }}
         </strong>

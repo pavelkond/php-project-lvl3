@@ -15,9 +15,9 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <script src="{{ asset('js/app.js') }}"></script>
 </head>
-<body>
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<body class="min-vh-100 d-flex flex-column">
+<header class="flex-shrink-0">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark px-3">
         <a href="{{ route('index') }}" class="navbar-brand">Анализатор страниц</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -25,13 +25,13 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
-                <li class="nav-item active"><a href="{{ route('index') }}" class="nav-link">Главная</a></li>
+                <li class="nav-item"><a href="{{ route('index') }}" class="nav-link">Главная</a></li>
                 <li class="nav-item"><a href="{{ route('urls.index') }}" class="nav-link">Сайты</a></li>
             </ul>
         </div>
     </nav>
 </header>
-<main>
+<main class="flex-grow-1">
     @include('flash-message')
 
     @yield('content')
