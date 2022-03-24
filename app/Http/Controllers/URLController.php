@@ -70,6 +70,7 @@ class URLController extends Controller
 
     public function check(int $urlId): \Illuminate\Http\RedirectResponse
     {
+        $createdAt = Carbon::now()->toDateTimeString();
         $url = DB::table('urls')->find($urlId);
         try {
             $response = Http::get($url->name);
@@ -81,7 +82,7 @@ class URLController extends Controller
                 'h1' => optional($document->first('h1'))->text(),
                 'title' => optional($document->first('title'))->text(),
                 'description' => optional($document->first('meta[name=description]'))->attr('content'),
-                'created_at' => Carbon::now()->toISOString()
+                'created_at' => $createdAt
             ]);
         } catch (\Exception $e) {
             return back()
