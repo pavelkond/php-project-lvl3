@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use DiDom\Document;
+use GuzzleHttp\Exception\ConnectException;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -60,8 +61,15 @@ class URLController extends Controller
     public function check($urlId): \Illuminate\Http\RedirectResponse
     {
         $url = DB::table('urls')->find($urlId);
-        $response = Http::get($url->name);
-        $document = new Document($response->body());
+        try {
+            $response = Http::get($url->name);
+            $document = new Document($response->body());
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return back()->with('error', $e->getMessage());
+        } catch (\ValueError $e) {
+            $document = new Document('html');
+        }
+
         DB::table('url_checks')->insert([
             'url_id' => $urlId,
             'status_code' => $response->status(),
