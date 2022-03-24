@@ -18,12 +18,18 @@ class URLController extends Controller
         $latest = DB::table('url_checks')
             ->groupBy('url_id')
             ->select('url_id', DB::raw('max("created_at") as latest_check'));
-        $latestWithCode = DB::table('url_checks')->joinSub($latest, 'sub', function ($join) {
-            $join->on('url_checks.url_id', '=', 'sub.url_id')
-                ->on('url_checks.created_at', '=', 'sub.latest_check');
-        })->get();
+        $latestWithCode = DB::table('url_checks')
+            ->joinSub($latest, 'sub', function ($join) {
+                $join->on('url_checks.url_id', '=', 'sub.url_id')
+                    ->on('url_checks.created_at', '=', 'sub.latest_check');
+            })->get();
         $latestChecks = $latestWithCode->mapWithKeys(function ($item, $key) {
-                return [$item->url_id => ['latest' => $item->latest_check, 'status' => $item->status_code]];
+            return [
+                $item->url_id => [
+                    'latest' => $item->latest_check,
+                    'status' => $item->status_code
+                ]
+            ];
         });
         return view('url.index', compact('urls', 'latestChecks'));
     }
@@ -32,7 +38,10 @@ class URLController extends Controller
     {
 
         $url = DB::table('urls')->find($id);
-        $checks = DB::table('url_checks')->where('url_id', $id)->get();
+        $checks = DB::table('url_checks')
+            ->where('url_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('url.show', compact('url', 'checks'));
     }
 
@@ -41,7 +50,9 @@ class URLController extends Controller
         $data = $request->input('url.name');
         $url = $this->normalizeURL($data);
         if (!$url) {
-            return back()->with('error', 'Некорректный URL')->with('currentUrl', $data);
+            return back()
+                ->with('error', 'Некорректный URL')
+                ->with('currentUrl', $data);
         }
         $reqURL = DB::table('urls')->where('name', $url)->first();
         $flashAlert = isset($reqURL->id) ? 'warning' : 'success';
