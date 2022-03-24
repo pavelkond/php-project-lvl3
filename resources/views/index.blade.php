@@ -6,7 +6,8 @@
         <h2>Бесплатно проверяйте сатый на SEO пригодность</h2>
         <form action="{{ route('urls.store') }}" method="post">
             @csrf
-            <input type="text" name="url[name]" placeholder="https://www.expample.com">
+            <input type="text" name="url[name]" value="{{ session('currentUrl') }}"
+                   placeholder="https://www.expample.com">
             <input type="submit" value="Проверить">
         </form>
     </div>
