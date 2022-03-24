@@ -52,12 +52,16 @@ class URLControllerTest extends TestCase
         ]);
         $url = DB::table('urls')->where('name', $data['url']['name'])->first();
         $this->assertNotNull($url);
-        $response->assertRedirect(route('urls.show', $url->id));
+        if (!is_null($url)) {
+            $response->assertRedirect(route('urls.show', $url->id));
+        }
         $response->assertSessionHasNoErrors();
 
 
         $response = $this->post(route('urls.store'), $data);
-        $response->assertRedirect(route('urls.show', $url->id));
+        if (!is_null($url)) {
+            $response->assertRedirect(route('urls.show', $url->id));
+        }
         $response->assertSessionHasNoErrors();
         $urlCount = DB::table('urls')->where('name', $data['url']['name'])->count();
         $this->assertEquals(1, $urlCount);
@@ -82,10 +86,12 @@ class URLControllerTest extends TestCase
     {
         $url = DB::table('urls')->inRandomOrder()->first();
         $this->assertNotNull($url);
-        $response = $this->get(route('urls.show', $url->id));
-        $response->assertOk();
-        $response->assertSessionHasNoErrors();
-        $response->assertSeeText($url->name);
+        if (!is_null($url)) {
+            $response = $this->get(route('urls.show', $url->id));
+            $response->assertSeeText($url->name);
+            $response->assertOk();
+            $response->assertSessionHasNoErrors();
+        }
     }
 
     public function testCheck()
@@ -93,10 +99,12 @@ class URLControllerTest extends TestCase
         $url = DB::table('urls')->inRandomOrder()->first();
         $this->assertNotNull($url);
         Http::fake();
-        $response = $this->post(route('urls.check', $url->id));
-        $response->assertRedirect(route('urls.show', $url->id));
-        $this->assertDatabaseHas('url_checks', [
-            'url_id' => $url->id
-        ]);
+        if (!is_null($url)) {
+            $response = $this->post(route('urls.check', $url->id));
+            $response->assertRedirect(route('urls.show', $url->id));
+            $this->assertDatabaseHas('url_checks', [
+                'url_id' => $url->id
+            ]);
+        }
     }
 }
