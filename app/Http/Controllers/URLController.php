@@ -61,7 +61,7 @@ class URLController extends Controller
         } else {
             $id = DB::table('urls')->insertGetId([
                 'name' => $url,
-                'created_at' => Carbon::now()->toDateTimeString()
+                'created_at' => Carbon::now()->toISOString()
             ]);
         }
 
@@ -86,8 +86,8 @@ class URLController extends Controller
             'status_code' => $response->status(),
             'h1' => optional($document->first('h1'))->text(),
             'title' => optional($document->first('title'))->text(),
-            'description' => optional($document->first('meta[name=description]'))->text(),
-            'created_at' => Carbon::now()->toDateTimeString()
+            'description' => optional($document->first('meta[name=description]'))->attr('content'),
+            'created_at' => Carbon::now()->toISOString()
         ]);
 
         return redirect()->route('urls.show', $urlId)->with('success', 'Страница успешно проверена');

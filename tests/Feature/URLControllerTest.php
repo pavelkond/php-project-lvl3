@@ -22,7 +22,7 @@ class URLControllerTest extends TestCase
         for ($i = 0; $i < 5; $i++) {
             DB::table('urls')->insert([
                 'name' => 'https://' . $this->faker->unique()->domainName,
-                'created_at' => Carbon::now()->toDateTimeString()
+                'created_at' => Carbon::now()->toISOString()
             ]);
         }
     }
