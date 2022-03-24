@@ -1,4 +1,4 @@
-@if(isset($errors))
+@if(isset($errors) && optional($errors)->first('error'))
     <div class="alert alert-danger" role="alert">
         <strong>
             {{ $errors->first('error') }}
