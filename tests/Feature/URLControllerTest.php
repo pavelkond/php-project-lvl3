@@ -22,7 +22,7 @@ class URLControllerTest extends TestCase
         for ($i = 0; $i < 5; $i++) {
             DB::table('urls')->insert([
                 'name' => 'https://' . $this->faker->unique()->domainName,
-                'created_at' => Carbon::now()->toISOString()
+                'created_at' => Carbon::now()->toDateTimeString()
             ]);
         }
     }
@@ -84,7 +84,7 @@ class URLControllerTest extends TestCase
 
     public function testShow()
     {
-        $url = DB::table('urls')->inRandomOrder()->first();
+        $url = DB::table('urls')->select('id', 'name')->inRandomOrder()->first();
         $this->assertNotNull($url);
         if (!is_null($url)) {
             $response = $this->get(route('urls.show', $url->id));
