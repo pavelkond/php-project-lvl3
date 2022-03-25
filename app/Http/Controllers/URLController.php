@@ -37,6 +37,9 @@ class URLController extends Controller
     public function show(int $id)
     {
         $url = DB::table('urls')->find($id);
+        if (is_null($url)) {
+            abort(404);
+        }
         $checks = DB::table('url_checks')
             ->where('url_id', $id)
             ->orderBy('created_at', 'desc')

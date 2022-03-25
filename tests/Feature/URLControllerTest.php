@@ -15,16 +15,16 @@ class URLControllerTest extends TestCase
     use WithFaker;
     use WithoutMiddleware;
 
+    private int $id;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->setUpFaker();
-        for ($i = 0; $i < 5; $i++) {
-            DB::table('urls')->insert([
-                'name' => 'https://' . $this->faker->unique()->domainName,
-                'created_at' => Carbon::now()->toDateTimeString()
-            ]);
-        }
+        $this->id = DB::table('urls')->insertGetId([
+            'name' => 'https://' . $this->faker->unique()->domainName,
+            'created_at' => Carbon::now()->toDateTimeString()
+        ]);
     }
 
     public function testIndex()
@@ -50,7 +50,11 @@ class URLControllerTest extends TestCase
         $this->assertDatabaseHas('urls', [
             'name' => $data['url']['name']
         ]);
-        $url = DB::table('urls')->where('name', $data['url']['name'])->first();
+        $url = optional(
+            DB::table('urls')
+                ->select('id')
+                ->where('name', $data['url']['name'])
+        )->first();
         $this->assertNotNull($url);
         if (!is_null($url)) {
             $response->assertRedirect(route('urls.show', $url->id));
@@ -84,27 +88,32 @@ class URLControllerTest extends TestCase
 
     public function testShow()
     {
-        $url = DB::table('urls')->select('id', 'name')->inRandomOrder()->first();
-        $this->assertNotNull($url);
-        if (!is_null($url)) {
-            $response = $this->get(route('urls.show', $url->id));
-            $response->assertSeeText($url->name);
-            $response->assertOk();
-            $response->assertSessionHasNoErrors();
-        }
+        $response = $this->get(route('urls.show', $this->id));
+        $response->assertOk();
+        $response->assertSessionHasNoErrors();
+    }
+
+    public function testShowWithInvalidId()
+    {
+        $id = 1000;
+        $response = $this->get(route('urls.show', $id));
+        $response->assertNotFound();
     }
 
     public function testCheck()
     {
-        $url = DB::table('urls')->inRandomOrder()->first();
-        $this->assertNotNull($url);
-        Http::fake();
-        if (!is_null($url)) {
-            $response = $this->post(route('urls.check', $url->id));
-            $response->assertRedirect(route('urls.show', $url->id));
-            $this->assertDatabaseHas('url_checks', [
-                'url_id' => $url->id
-            ]);
-        }
+        $body = file_get_contents(__DIR__ . '/../fixtures/test.html');
+        Http::fake([
+            '*' => Http::response($body)
+        ]);
+        $response = $this->post(route('urls.check', $this->id));
+        $response->assertRedirect(route('urls.show', $this->id));
+        $this->assertDatabaseHas('url_checks', [
+            'url_id' => $this->id,
+            'title' => 'Test HTML',
+            'h1' => 'Test',
+            'description' => 'Test',
+            'status_code' => 200
+        ]);
     }
 }
