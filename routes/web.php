@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\URLCheckController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\URLController;
 
@@ -27,5 +28,5 @@ Route::get('/urls/{id}', [URLController::class, 'show'])
 Route::post('/urls', ['before' => 'csrf', URLController::class, 'store'])
     ->name('urls.store');
 
-Route::post('/urls/{id}/checks', ['before' => 'csrf', URLController::class, 'check'])
+Route::post('/urls/{id}/checks', ['before' => 'csrf', URLCheckController::class, 'check'])
     ->name('urls.check');
