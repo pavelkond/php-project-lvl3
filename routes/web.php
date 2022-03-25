@@ -28,5 +28,5 @@ Route::get('/urls/{id}', [URLController::class, 'show'])
 Route::post('/urls', ['before' => 'csrf', URLController::class, 'store'])
     ->name('urls.store');
 
-Route::post('/urls/{id}/checks', ['before' => 'csrf', URLCheckController::class, 'check'])
+Route::post('/urls/{id}/checks', [URLCheckController::class, 'check'])
     ->name('urls.check');
